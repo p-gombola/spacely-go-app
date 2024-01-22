@@ -21,6 +21,7 @@ jobs:
         name: Run tests
         run: |
           go test -v ./...
-      - uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v1
-        name: SonarQube Scan
-        kind: scan
+      - uses: docker://alpine:3.19
+        name: Test vars
+        run: |
+          echo -e "commit: ${{ cloudbees.scm.sha }}"
