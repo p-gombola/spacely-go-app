@@ -8,16 +8,6 @@ on:
 jobs:
   ci-job:
     steps:
-    - uses: cloudbees-io/checkout@v1
-      name: checkout
-    - uses: docker://golang:1.20
-      name: Build Go app
-      run: |
-        go build -v ./...
-    - uses: docker://golang:1.20
-      name: Run tests
-      run: |
-        go test -v ./...
     - id: dockerconfig
       name: Configure container registry credentials
       uses: cloudbees-io/configure-oci-credentials@v1
@@ -25,3 +15,24 @@ jobs:
         registry: ${{ vars.DOCKER_REGISTRY }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - uses: cloudbees-io/checkout@v1
+      name: checkout
+
+    - uses: docker://golang:1.20
+      name: Build Go app
+      run: |
+        go build -v ./...
+
+    - uses: docker://golang:1.20
+      name: Run tests
+      run: |
+        go test -v ./...
+        
+    - id: build-image
+      name: Build spacely image
+      uses: cloudbees-io/kaniko@v1
+      with:
+        dockerfile: Dockerfile
+        destination: ${{ vars.DOCKER_REGISTRY }}:latest
+        context: ${{ cloudbees.workspace }}
