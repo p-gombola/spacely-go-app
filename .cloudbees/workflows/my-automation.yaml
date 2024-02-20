@@ -8,17 +8,13 @@ on:
 jobs:
   ci-job:
     steps:
-      #- uses: cloudbees-io/checkout@v1
-      #  name: checkout
-      #- uses: docker://golang:1.20
-      #  name: Build Go app
-      #  run: |
-      #    go build -v ./...
-      #- uses: docker://golang:1.20
-      #  name: Run tests
-      #  run: |
-      #    go test -v ./...
-      - uses: docker://alpine:3.19
-        name: Test vars
-        run: |
-          echo -e "commit: ${{ cloudbees.scm.sha }}"
+      - uses: cloudbees-io/checkout@v1
+       name: checkout
+      - uses: docker://golang:1.20
+       name: Build Go app
+       run: |
+         go build -v ./...
+      - uses: docker://golang:1.20
+       name: Run tests
+       run: |
+         go test -v ./...
