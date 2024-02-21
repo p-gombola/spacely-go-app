@@ -31,7 +31,7 @@ jobs:
         
     - id: build-image
       name: Build spacely image
-      uses: cloudbees-io/kaniko@v1
+      uses: cloudbees-io/kaniko@1ea4047fb3a7ad3eaaec889e4d8389743243496b17e68cdbd6a8908a16ca88ae
       with:
         dockerfile: Dockerfile
         destination: ${{ vars.DOCKER_REGISTRY }}:latest
