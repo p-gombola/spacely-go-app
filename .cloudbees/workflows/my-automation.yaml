@@ -8,31 +8,17 @@ on:
 jobs:
   ci-job:
     steps:
-    - id: dockerconfig
-      name: Configure container registry credentials
-      uses: cloudbees-io/configure-oci-credentials@v1
-      with:
-        registry: ${{ vars.DOCKER_REGISTRY }}
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - uses: cloudbees-io/checkout@v1
-      name: checkout
-
-    - uses: docker://golang:1.20
-      name: Build Go app
-      run: |
-        go build -v ./...
-
-    - uses: docker://golang:1.20
-      name: Run tests
-      run: |
-        go test -v ./...
-        
-    - id: build-image
-      name: Build spacely image
-      uses: cloudbees-io/kaniko@sha:1ea4047fb3a7ad3eaaec889e4d8389743243496b17e68cdbd6a8908a16ca88ae
-      with:
-        dockerfile: Dockerfile
-        destination: ${{ vars.DOCKER_REGISTRY }}:latest
-        context: ${{ cloudbees.workspace }}
+      - name: checkout
+        uses: cloudbees-io/checkout@v1
+      - name: test
+        uses: docker://golang:1.22-alpine3.19
+        run: go test -cover ./...
+      - name: build
+        uses: docker://golang:1.22-alpine3.19
+        run: go build .
+      - name: scan
+        uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v2
+        with:
+          cover-file-name: ./coverage.xml
+          language: LANGUAGE_GO
+      
